@@ -17,12 +17,6 @@ let food = generateFood();  // Initial food position
 let changingDirection = false;  // Prevent multiple direction changes at once
 let gameInterval;
 
-// Variables to track touch positions
-let touchStartX = 0;
-let touchStartY = 0;
-let touchEndX = 0;
-let touchEndY = 0;
-
 // Start the game loop
 function startGame() {
   gameInterval = setInterval(updateGame, 100);
@@ -132,61 +126,28 @@ function resetGame() {
   startGame();
 }
 
-// Detect touch gestures for mobile play (Swipe Controls)
-canvas.addEventListener('touchstart', handleTouchStart, false);
-canvas.addEventListener('touchmove', handleTouchMove, false);
-
-// Capture the starting point of the touch
-function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0];
-  touchStartX = firstTouch.clientX;
-  touchStartY = firstTouch.clientY;
-}
-
-// Capture the ending point and determine the direction of the swipe
-function handleTouchMove(evt) {
-  if (!touchStartX || !touchStartY) {
-    return;
-  }
-
-  touchEndX = evt.touches[0].clientX;
-  touchEndY = evt.touches[0].clientY;
-
-  const diffX = touchEndX - touchStartX;
-  const diffY = touchEndY - touchStartY;
+// Handle user input for changing snake direction (Arrow Keys only)
+document.addEventListener('keydown', (event) => {
+  const keyPressed = event.key;
 
   if (changingDirection) return;
 
-  // Determine whether the swipe was horizontal or vertical
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    // Swipe was horizontal
-    if (diffX > 0 && dx === 0) {
-      // Right swipe
-      dx = gridSize;
-      dy = 0;
-    } else if (diffX < 0 && dx === 0) {
-      // Left swipe
-      dx = -gridSize;
-      dy = 0;
-    }
-  } else {
-    // Swipe was vertical
-    if (diffY > 0 && dy === 0) {
-      // Down swipe
-      dx = 0;
-      dy = gridSize;
-    } else if (diffY < 0 && dy === 0) {
-      // Up swipe
-      dx = 0;
-      dy = -gridSize;
-    }
+  if (keyPressed === 'ArrowUp' && dy === 0) {
+    dx = 0;
+    dy = -gridSize;  // Move Up
+  } else if (keyPressed === 'ArrowDown' && dy === 0) {
+    dx = 0;
+    dy = gridSize;  // Move Down
+  } else if (keyPressed === 'ArrowLeft' && dx === 0) {
+    dx = -gridSize;
+    dy = 0;  // Move Left
+  } else if (keyPressed === 'ArrowRight' && dx === 0) {
+    dx = gridSize;
+    dy = 0;  // Move Right
   }
 
-  // Reset starting positions after the swipe is processed
-  touchStartX = 0;
-  touchStartY = 0;
   changingDirection = true;
-}
+});
 
 // Start the game for the first time
 resetGame();
